@@ -1,6 +1,6 @@
-// Service Worker — Piano Pasti Luca
+// Service Worker — La Cucina di Giusy
 // Version bump here forces cache invalidation on all clients
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = `piano-pasti-${CACHE_VERSION}`;
 const BASE_PATH = '/meal-planner';
 
@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
   `${BASE_PATH}/index.html`,
   `${BASE_PATH}/settimana/`,
   `${BASE_PATH}/spesa/`,
+  `${BASE_PATH}/badge/`,
   `${BASE_PATH}/manifest.json`,
   `${BASE_PATH}/icons/icon-192.png`,
   `${BASE_PATH}/icons/icon-512.png`,
@@ -52,14 +53,27 @@ self.addEventListener('fetch', (event) => {
   // Only handle requests from our own origin
   if (url.origin !== location.origin) return;
 
-  // Cache-first strategy
+  // Network-first for HTML pages, cache-first for assets
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          return response;
+        })
+        .catch(() => caches.match(request).then((cached) => cached || caches.match(`${BASE_PATH}/`)))
+    );
+    return;
+  }
+
+  // Cache-first for assets (JS, CSS, images)
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
         .then((response) => {
-          // Only cache successful, non-opaque responses
           if (!response || response.status !== 200 || response.type === 'opaque') {
             return response;
           }
@@ -69,12 +83,7 @@ self.addEventListener('fetch', (event) => {
 
           return response;
         })
-        .catch(() => {
-          // For navigate requests, return the cached home page as fallback
-          if (request.mode === 'navigate') {
-            return caches.match(`${BASE_PATH}/`) || caches.match(`${BASE_PATH}/index.html`);
-          }
-        });
+        .catch(() => undefined);
     })
   );
 });
