@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getDayPlan, formatDateKey, parseDateKey } from '@/data/utils';
+import { getEffectiveDayPlan, formatDateKey, parseDateKey } from '@/data/utils';
 import DayView from '@/components/DayView';
 
 function getGreeting(): string {
@@ -48,7 +48,7 @@ export default function Home() {
     return <SkeletonLoader />;
   }
 
-  const plan    = getDayPlan(selectedDate);
+  const plan    = getEffectiveDayPlan(selectedDate);
   const today   = new Date();
   const isToday = formatDateKey(selectedDate) === formatDateKey(today);
 

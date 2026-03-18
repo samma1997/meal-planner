@@ -10,6 +10,7 @@ export default function Navigation() {
     { href: '/',          label: 'Oggi',      icon: '🏠' },
     { href: '/settimana', label: 'Settimana',  icon: '📅' },
     { href: '/spesa',     label: 'Spesa',     icon: '🛒' },
+    { href: '/frigo',     label: 'Frigo',     icon: '🧊' },
     { href: '/badge',     label: 'Traguardi', icon: '🏅' },
   ];
 

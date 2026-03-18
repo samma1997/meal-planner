@@ -1,7 +1,9 @@
 'use client';
 
-import { DayPlan } from '@/data/types';
-import { getDayMacros, formatDateItalian, formatDateKey } from '@/data/utils';
+import { useState, useEffect } from 'react';
+import { DayPlan, Meal } from '@/data/types';
+import { getDayMacros, formatDateItalian, formatDateKey, getAlternativeMeal, saveSwap, getSwap } from '@/data/utils';
+import { allMeals } from '@/data/meals';
 import MealCard from './MealCard';
 import MacroSummary from './MacroSummary';
 import Link from 'next/link';
@@ -13,9 +15,32 @@ interface DayViewProps {
 }
 
 export default function DayView({ plan, date, showNavigation = true }: DayViewProps) {
-  const macros  = getDayMacros(plan);
+  const dateKey = formatDateKey(date);
+
+  // Local meal state — starts from the base plan, then hydrates from localStorage swaps
+  const [colazione, setColazione] = useState<Meal>(plan.colazione);
+  const [pranzo,    setPranzo]    = useState<Meal>(plan.pranzo);
+  const [spuntino,  setSpuntino]  = useState<Meal>(plan.spuntino);
+  const [cena,      setCena]      = useState<Meal>(plan.cena);
+
+  // Hydrate saved swaps from localStorage on mount / when date changes
+  useEffect(() => {
+    const resolve = (baseMeal: Meal): Meal => {
+      const savedId = getSwap(dateKey, baseMeal.tipo);
+      if (!savedId) return baseMeal;
+      return allMeals.find(m => m.id === savedId) ?? baseMeal;
+    };
+    setColazione(resolve(plan.colazione));
+    setPranzo(resolve(plan.pranzo));
+    setSpuntino(resolve(plan.spuntino));
+    setCena(resolve(plan.cena));
+  }, [dateKey, plan.colazione, plan.pranzo, plan.spuntino, plan.cena]);
+
+  // Build the effective plan for macros / cost display
+  const effectivePlan: DayPlan = { ...plan, colazione, pranzo, spuntino, cena };
+  const macros  = getDayMacros(effectivePlan);
   const dateStr = formatDateItalian(date);
-  const isToday = formatDateKey(new Date()) === formatDateKey(date);
+  const isToday = formatDateKey(new Date()) === dateKey;
 
   const prevDate = new Date(date);
   prevDate.setDate(prevDate.getDate() - 1);
@@ -28,6 +53,31 @@ export default function DayView({ plan, date, showNavigation = true }: DayViewPr
       : plan.costoStimato > 12
       ? '#E8734A'
       : '#6B9E6B';
+
+  // Shuffle handlers — each closes over its own current meal ref via the setter
+  const handleSwapColazione = () => {
+    const alt = getAlternativeMeal(colazione);
+    saveSwap(dateKey, 'colazione', alt.id);
+    setColazione(alt);
+  };
+  const handleSwapPranzo = () => {
+    const alt = getAlternativeMeal(pranzo);
+    saveSwap(dateKey, 'pranzo', alt.id);
+    setPranzo(alt);
+  };
+  const handleSwapSpuntino = () => {
+    const alt = getAlternativeMeal(spuntino);
+    saveSwap(dateKey, 'spuntino', alt.id);
+    setSpuntino(alt);
+  };
+  const handleSwapCena = () => {
+    const alt = getAlternativeMeal(cena);
+    saveSwap(dateKey, 'cena', alt.id);
+    setCena(alt);
+  };
+
+  // Only allow shuffle on non-cheat / non-pizza days
+  const canShuffle = !plan.isCheatDay && !plan.isPizzaDay;
 
   return (
     <div className="space-y-4 page-enter">
@@ -141,10 +191,34 @@ export default function DayView({ plan, date, showNavigation = true }: DayViewPr
 
       {/* Meal cards */}
       <div className="space-y-3">
-        <div className="card-enter"><MealCard meal={plan.colazione} /></div>
-        <div className="card-enter"><MealCard meal={plan.pranzo} /></div>
-        <div className="card-enter"><MealCard meal={plan.spuntino} /></div>
-        <div className="card-enter"><MealCard meal={plan.cena} /></div>
+        <div className="card-enter">
+          <MealCard
+            meal={colazione}
+            onSwap={canShuffle ? handleSwapColazione : undefined}
+            dateKey={dateKey}
+          />
+        </div>
+        <div className="card-enter">
+          <MealCard
+            meal={pranzo}
+            onSwap={canShuffle ? handleSwapPranzo : undefined}
+            dateKey={dateKey}
+          />
+        </div>
+        <div className="card-enter">
+          <MealCard
+            meal={spuntino}
+            onSwap={canShuffle ? handleSwapSpuntino : undefined}
+            dateKey={dateKey}
+          />
+        </div>
+        <div className="card-enter">
+          <MealCard
+            meal={cena}
+            onSwap={canShuffle ? handleSwapCena : undefined}
+            dateKey={dateKey}
+          />
+        </div>
       </div>
     </div>
   );

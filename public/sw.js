@@ -1,6 +1,6 @@
 // Service Worker — La Cucina di Giusy
 // Version bump here forces cache invalidation on all clients
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `piano-pasti-${CACHE_VERSION}`;
 const BASE_PATH = '/meal-planner';
 
@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
   `${BASE_PATH}/index.html`,
   `${BASE_PATH}/settimana/`,
   `${BASE_PATH}/spesa/`,
+  `${BASE_PATH}/frigo/`,
   `${BASE_PATH}/badge/`,
   `${BASE_PATH}/manifest.json`,
   `${BASE_PATH}/icons/icon-192.png`,

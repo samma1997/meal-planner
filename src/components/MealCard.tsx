@@ -5,6 +5,10 @@ import { Meal, CookingMethod } from '@/data/types';
 
 interface MealCardProps {
   meal: Meal;
+  /** Called when the user taps the shuffle button. The parent handles state updates. */
+  onSwap?: () => void;
+  /** Pass the date key (YYYY-MM-DD) so swaps can be persisted */
+  dateKey?: string;
 }
 
 const cookingIcons: Record<CookingMethod, { icon: string; label: string }> = {
@@ -30,11 +34,25 @@ const mealLabels: Record<string, string> = {
   cena:      'Cena',
 };
 
-export default function MealCard({ meal }: MealCardProps) {
-  const [expanded, setExpanded] = useState(false);
+export default function MealCard({ meal, onSwap }: MealCardProps) {
+  const [expanded, setExpanded]     = useState(false);
+  const [fading, setFading]         = useState(false);
   const cooking     = cookingIcons[meal.metodo];
   const borderColor = mealBorderColor[meal.tipo] ?? '#E8734A';
   const hasRicetta  = Array.isArray(meal.ricetta) && meal.ricetta.length > 0;
+  const canShuffle  = !!onSwap;
+
+  const handleShuffle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onSwap) return;
+    // Trigger a brief fade-out, then delegate the swap logic to the parent
+    setFading(true);
+    setTimeout(() => {
+      onSwap();
+      setFading(false);
+      setExpanded(false);
+    }, 180);
+  };
 
   return (
     <div
@@ -43,79 +61,102 @@ export default function MealCard({ meal }: MealCardProps) {
         background: '#FFFFFF',
         border: '1px solid #F0E6D8',
         borderLeft: `4px solid ${borderColor}`,
+        opacity: fading ? 0 : 1,
+        transition: 'opacity 0.18s ease',
       }}
     >
-      {/* Tappable header row */}
-      <button
-        className="w-full text-left"
-        onClick={() => setExpanded(!expanded)}
-        aria-expanded={expanded}
-      >
-        <div className="p-4 flex items-center gap-4">
-          {/* Emoji on the left */}
-          <div
-            className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center"
-            style={{ background: '#FFF8F0', fontSize: '32px', lineHeight: 1 }}
+      {/* Header row wrapper — positions shuffle button absolutely */}
+      <div className="relative">
+        {/* Shuffle button — top-right corner, only shown if onSwap provided */}
+        {canShuffle && (
+          <button
+            onClick={handleShuffle}
+            aria-label="Cambia piatto"
+            className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition-all duration-150"
+            style={{
+              background: '#FBE9E0',
+              border: '1px solid #F0E6D8',
+              color: '#E8734A',
+              fontSize: '16px',
+              lineHeight: 1,
+            }}
           >
-            {meal.emoji}
-          </div>
+            🔀
+          </button>
+        )}
 
-          {/* Name + method on the right */}
-          <div className="flex-1 min-w-0">
-            {/* Meal type label */}
-            <span
-              className="text-xs font-bold uppercase tracking-wide"
-              style={{ color: borderColor }}
+        {/* Tappable header row */}
+        <button
+          className="w-full text-left"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+        >
+          <div className={`p-4 flex items-center gap-4 ${canShuffle ? 'pr-14' : ''}`}>
+            {/* Emoji on the left */}
+            <div
+              className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center"
+              style={{ background: '#FFF8F0', fontSize: '32px', lineHeight: 1 }}
             >
-              {mealLabels[meal.tipo]}
-            </span>
+              {meal.emoji}
+            </div>
 
-            {/* Meal name */}
-            <h3
-              className="font-black text-lg leading-tight mt-0.5"
-              style={{ color: '#2D2016' }}
-            >
-              {meal.nome}
-            </h3>
-
-            {/* Cooking method + time row */}
-            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            {/* Name + method on the right */}
+            <div className="flex-1 min-w-0">
+              {/* Meal type label */}
               <span
-                className="text-xs font-medium px-2 py-1 rounded-full"
-                style={{ background: '#FBE9E0', color: '#8B7355' }}
+                className="text-xs font-bold uppercase tracking-wide"
+                style={{ color: borderColor }}
               >
-                {cooking.icon} {cooking.label}
+                {mealLabels[meal.tipo]}
               </span>
-              <span
-                className="text-xs font-medium px-2 py-1 rounded-full"
-                style={{ background: '#F0E6D8', color: '#8B7355' }}
+
+              {/* Meal name */}
+              <h3
+                className="font-black text-lg leading-tight mt-0.5"
+                style={{ color: '#2D2016' }}
               >
-                {meal.tempoPreparazione} min
+                {meal.nome}
+              </h3>
+
+              {/* Cooking method + time row */}
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span
+                  className="text-xs font-medium px-2 py-1 rounded-full"
+                  style={{ background: '#FBE9E0', color: '#8B7355' }}
+                >
+                  {cooking.icon} {cooking.label}
+                </span>
+                <span
+                  className="text-xs font-medium px-2 py-1 rounded-full"
+                  style={{ background: '#F0E6D8', color: '#8B7355' }}
+                >
+                  {meal.tempoPreparazione} min
+                </span>
+              </div>
+            </div>
+
+            {/* Expand chevron */}
+            <div style={{ color: '#8B7355', fontSize: '18px' }}>
+              <span
+                className="inline-block transition-transform duration-300"
+                style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
+                ▾
               </span>
             </div>
           </div>
 
-          {/* Expand chevron */}
-          <div style={{ color: '#8B7355', fontSize: '18px' }}>
-            <span
-              className="inline-block transition-transform duration-300"
-              style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          {/* Expand hint text */}
+          {!expanded && (
+            <div
+              className="px-4 pb-3 text-xs font-medium"
+              style={{ color: '#8B7355' }}
             >
-              ▾
-            </span>
-          </div>
-        </div>
-
-        {/* Expand hint text */}
-        {!expanded && (
-          <div
-            className="px-4 pb-3 text-xs font-medium"
-            style={{ color: '#8B7355' }}
-          >
-            Tocca per vedere la ricetta
-          </div>
-        )}
-      </button>
+              Tocca per vedere la ricetta
+            </div>
+          )}
+        </button>
+      </div>
 
       {/* Expanded content */}
       {expanded && (

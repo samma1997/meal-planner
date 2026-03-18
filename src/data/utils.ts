@@ -1,5 +1,5 @@
-import { DayPlan, Macros, ShoppingItem } from './types';
-import { weekPlans } from './meals';
+import { DayPlan, Macros, Meal, ShoppingItem } from './types';
+import { weekPlans, colazioni, pranzi, spuntini, cene, allMeals } from './meals';
 
 /**
  * Given a JS Date, returns which of the 4 plan-weeks (1-4) to use.
@@ -181,3 +181,125 @@ export const TARGET_MACROS: Macros = {
   carboidrati: 280,
   grassi: 65,
 };
+
+// ─── SWAP HELPERS ─────────────────────────────────────────────────────────────
+
+const SWAPS_KEY = 'meal-swaps';
+
+function getMealArrayForType(tipo: Meal['tipo']): Meal[] {
+  switch (tipo) {
+    case 'colazione': return colazioni;
+    case 'pranzo':    return pranzi;
+    case 'spuntino':  return spuntini;
+    case 'cena':      return cene;
+  }
+}
+
+/**
+ * Returns a random alternative meal of the same type, different from currentMeal.
+ */
+export function getAlternativeMeal(currentMeal: Meal): Meal {
+  const pool = getMealArrayForType(currentMeal.tipo).filter(m => m.id !== currentMeal.id);
+  if (pool.length === 0) return currentMeal;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/**
+ * Saves a meal swap to localStorage.
+ * key format: "YYYY-MM-DD:mealType" → mealId
+ */
+export function saveSwap(dateKey: string, mealType: string, mealId: string): void {
+  if (typeof window === 'undefined') return;
+  const raw = localStorage.getItem(SWAPS_KEY);
+  const swaps: Record<string, string> = raw ? JSON.parse(raw) : {};
+  swaps[`${dateKey}:${mealType}`] = mealId;
+  localStorage.setItem(SWAPS_KEY, JSON.stringify(swaps));
+}
+
+/**
+ * Retrieves a saved swap meal ID for a date + meal type, or null if none.
+ */
+export function getSwap(dateKey: string, mealType: string): string | null {
+  if (typeof window === 'undefined') return null;
+  const raw = localStorage.getItem(SWAPS_KEY);
+  if (!raw) return null;
+  const swaps: Record<string, string> = JSON.parse(raw);
+  return swaps[`${dateKey}:${mealType}`] ?? null;
+}
+
+/**
+ * Returns the DayPlan for a date with any localStorage swaps applied.
+ */
+export function getEffectiveDayPlan(date: Date): DayPlan {
+  const base = getDayPlan(date);
+  const dateKey = formatDateKey(date);
+
+  const resolve = (meal: Meal): Meal => {
+    const swappedId = getSwap(dateKey, meal.tipo);
+    if (!swappedId) return meal;
+    const found = allMeals.find(m => m.id === swappedId);
+    return found ?? meal;
+  };
+
+  return {
+    ...base,
+    colazione: resolve(base.colazione),
+    pranzo:    resolve(base.pranzo),
+    spuntino:  resolve(base.spuntino),
+    cena:      resolve(base.cena),
+  };
+}
+
+// ─── FRIDGE MATCHING ──────────────────────────────────────────────────────────
+
+// Condiments that are always assumed to be available — excluded from match checks
+const ALWAYS_AVAILABLE = [
+  'passata di pomodoro', 'pesto', 'olio evo', 'olio', 'sale',
+  'curcuma', 'miele', 'cannella', 'acqua',
+];
+
+function normalize(s: string): string {
+  return s.toLowerCase().trim();
+}
+
+function isCondiment(ingredientName: string): boolean {
+  const n = normalize(ingredientName);
+  return ALWAYS_AVAILABLE.some(c => n.includes(c));
+}
+
+/**
+ * Given a list of selected ingredient names, returns exact and near-match meals
+ * from the full swappable meal pool.
+ */
+export function findMatchingMeals(selectedIngredients: string[]): {
+  exact: Meal[];
+  nearMatch: { meal: Meal; missing: string[] }[];
+} {
+  const normalizedSelected = selectedIngredients.map(normalize);
+
+  const hasIngredient = (name: string): boolean => {
+    const n = normalize(name);
+    // Check if it's a condiment (always available)
+    if (isCondiment(n)) return true;
+    // Fuzzy match: selected ingredient contains the name or vice-versa
+    return normalizedSelected.some(sel => sel.includes(n) || n.includes(sel));
+  };
+
+  const exact: Meal[] = [];
+  const nearMatch: { meal: Meal; missing: string[] }[] = [];
+
+  for (const meal of allMeals) {
+    const requiredIngredients = meal.ingredienti.filter(ing => !isCondiment(ing.name));
+    const missing = requiredIngredients
+      .filter(ing => !hasIngredient(ing.name))
+      .map(ing => ing.name);
+
+    if (missing.length === 0) {
+      exact.push(meal);
+    } else if (missing.length === 1) {
+      nearMatch.push({ meal, missing });
+    }
+  }
+
+  return { exact, nearMatch };
+}

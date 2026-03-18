@@ -766,6 +766,16 @@ const cenaPizza: Meal = {
   ],
 };
 
+// ─── EXPORTED MEAL ARRAYS (for shuffle & fridge features) ─────────────────────
+
+export const colazioni: Meal[] = [col1, col2, col3, col4, col5, col6, col7];
+export const pranzi: Meal[]    = [pran1, pran2, pran3, pran4, pran5, pran6, pran7, pran8, pran9, pran10];
+export const spuntini: Meal[]  = [spun1, spun2, spun3, spun4, spun5, spun6, spun7];
+export const cene: Meal[]      = [cena1, cena2, cena3, cena4, cena5, cena6, cena7, cena8];
+
+// All swappable meals combined (excludes cheat/pizza/sunday specials)
+export const allMeals: Meal[]  = [...colazioni, ...pranzi, ...spuntini, ...cene];
+
 // ─── WEEK PLANS ───────────────────────────────────────────────────────────────
 // weekDay: 0=lunedi, 1=martedi, 2=mercoledi, 3=giovedi, 4=venerdi, 5=sabato(cheat), 6=domenica(pizza)
 
