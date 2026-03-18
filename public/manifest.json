@@ -1,0 +1,82 @@
+{
+  "name": "Piano Pasti Luca",
+  "short_name": "Piano Pasti",
+  "description": "Piano alimentare settimanale per Luca — 2400 kcal/giorno per supportare l'allenamento",
+  "start_url": "/meal-planner/",
+  "scope": "/meal-planner/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "prefer_related_applications": false,
+  "background_color": "#f9fafb",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "categories": ["food", "health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/meal-planner/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/meal-planner/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/meal-planner/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/meal-planner/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Oggi",
+      "short_name": "Oggi",
+      "description": "Vedi il piano pasti di oggi",
+      "url": "/meal-planner/",
+      "icons": [
+        {
+          "src": "/meal-planner/icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Settimana",
+      "short_name": "Settimana",
+      "description": "Piano pasti settimanale",
+      "url": "/meal-planner/settimana/",
+      "icons": [
+        {
+          "src": "/meal-planner/icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Spesa",
+      "short_name": "Spesa",
+      "description": "Lista della spesa",
+      "url": "/meal-planner/spesa/",
+      "icons": [
+        {
+          "src": "/meal-planner/icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}

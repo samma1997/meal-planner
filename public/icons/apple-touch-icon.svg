@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none">
+  <!-- iOS apple-touch-icon: no rounded corners (iOS applies them) -->
+  <!-- Background -->
+  <rect width="180" height="180" fill="#f97316"/>
+
+  <!-- Plate shadow -->
+  <ellipse cx="90" cy="104" rx="46" ry="10" fill="rgba(0,0,0,0.13)"/>
+
+  <!-- Plate -->
+  <circle cx="90" cy="90" r="46" fill="white"/>
+  <!-- Plate inner rim -->
+  <circle cx="90" cy="90" r="40" fill="#fff7ed"/>
+  <!-- Plate center -->
+  <circle cx="90" cy="90" r="28" fill="white"/>
+
+  <!-- Fork -->
+  <g fill="#f97316">
+    <rect x="44" y="80" width="6.5" height="34" rx="3.25"/>
+    <rect x="42" y="48" width="2.5" height="20" rx="1.25"/>
+    <rect x="47" y="48" width="2.5" height="20" rx="1.25"/>
+    <rect x="52" y="48" width="2.5" height="20" rx="1.25"/>
+    <rect x="42" y="66" width="13" height="5" rx="2"/>
+    <rect x="45" y="70" width="6" height="11" rx="2.5"/>
+  </g>
+
+  <!-- Knife -->
+  <g fill="#f97316">
+    <rect x="130" y="80" width="6.5" height="34" rx="3.25"/>
+    <path d="M130 48 Q140 57 136.5 79 L130 79 Z"/>
+    <rect x="129" y="77" width="9" height="5" rx="2"/>
+  </g>
+
+  <!-- Steam -->
+  <g stroke="white" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.9">
+    <path d="M76 70 Q71 63 76 56 Q81 49 76 42"/>
+    <path d="M90 68 Q85 61 90 54 Q95 47 90 40"/>
+    <path d="M104 70 Q99 63 104 56 Q109 49 104 42"/>
+  </g>
+</svg>

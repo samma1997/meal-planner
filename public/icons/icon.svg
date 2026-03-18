@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#f97316"/>
+
+  <!-- Outer plate shadow -->
+  <ellipse cx="256" cy="298" rx="128" ry="28" fill="rgba(0,0,0,0.12)"/>
+
+  <!-- Plate -->
+  <circle cx="256" cy="256" r="128" fill="white"/>
+  <!-- Plate inner rim -->
+  <circle cx="256" cy="256" r="112" fill="#fff7ed"/>
+  <!-- Plate center -->
+  <circle cx="256" cy="256" r="80" fill="white"/>
+
+  <!-- Fork left side -->
+  <g fill="#f97316">
+    <!-- Handle -->
+    <rect x="126" y="228" width="18" height="96" rx="9"/>
+    <!-- Tines group -->
+    <rect x="122" y="136" width="7" height="56" rx="3.5"/>
+    <rect x="133" y="136" width="7" height="56" rx="3.5"/>
+    <rect x="144" y="136" width="7" height="56" rx="3.5"/>
+    <!-- Tine connector -->
+    <rect x="122" y="187" width="30" height="14" rx="5"/>
+    <!-- Tine to handle transition -->
+    <rect x="128" y="198" width="16" height="32" rx="6"/>
+  </g>
+
+  <!-- Knife right side -->
+  <g fill="#f97316">
+    <!-- Handle -->
+    <rect x="368" y="228" width="18" height="96" rx="9"/>
+    <!-- Blade with taper -->
+    <path d="M368 136 Q386 160 378 226 L368 226 Z" fill="#f97316" rx="4"/>
+    <!-- Bolster -->
+    <rect x="366" y="222" width="22" height="10" rx="4"/>
+  </g>
+
+  <!-- Steam wisps -->
+  <g stroke="white" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.9">
+    <path d="M216 196 Q204 178 216 160 Q228 142 216 124"/>
+    <path d="M256 190 Q244 172 256 154 Q268 136 256 118"/>
+    <path d="M296 196 Q284 178 296 160 Q308 142 296 124"/>
+  </g>
+
+  <!-- App name text at bottom -->
+  <text
+    x="256"
+    y="460"
+    text-anchor="middle"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-weight="800"
+    font-size="52"
+    fill="white"
+    letter-spacing="-1"
+  >PASTI</text>
+</svg>
