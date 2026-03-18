@@ -1,5 +1,5 @@
 import { DayPlan, Macros, ShoppingItem } from './types';
-import { weeklyPlans } from './meals';
+import { weekPlans } from './meals';
 
 /**
  * Given a JS Date, returns which of the 4 plan-weeks (1-4) to use.
@@ -27,8 +27,8 @@ export function getDayOfWeek(date: Date): number {
 export function getDayPlan(date: Date): DayPlan {
   const weekNum = getWeekNumberForDate(date);
   const dayOfWeek = getDayOfWeek(date);
-  const week = weeklyPlans.find(w => w.settimana === weekNum);
-  if (!week) return weeklyPlans[0].giorni[0];
+  const week = weekPlans.find(w => w.settimana === weekNum);
+  if (!week) return weekPlans[0].giorni[0];
   const day = week.giorni.find(d => d.weekDay === dayOfWeek);
   return day || week.giorni[0];
 }
@@ -38,7 +38,7 @@ export function getDayPlan(date: Date): DayPlan {
  */
 export function getWeekPlan(date: Date) {
   const weekNum = getWeekNumberForDate(date);
-  return weeklyPlans.find(w => w.settimana === weekNum) || weeklyPlans[0];
+  return weekPlans.find(w => w.settimana === weekNum) || weekPlans[0];
 }
 
 /**
