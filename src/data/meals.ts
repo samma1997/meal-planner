@@ -1014,7 +1014,7 @@ export const weekPlans: WeekPlan[] = [
         colazione: col7,
         pranzo: pran10,
         spuntino: spun5,
-        cena: cena3,
+        cena: cena1,
         costoStimato: 9,
       },
       {
