@@ -7,11 +7,11 @@ import WeekOverview from '@/components/WeekOverview';
 function SkeletonLoader() {
   return (
     <div className="space-y-4 page-enter">
-      <div className="skeleton h-8 w-40" />
+      <div className="skeleton h-8 w-48" />
       <div className="skeleton h-16 w-full rounded-2xl" />
-      <div className="skeleton h-20 w-full rounded-3xl" />
+      <div className="skeleton h-20 w-full rounded-2xl" />
       {[1, 2, 3, 4, 5, 6, 7].map(i => (
-        <div key={i} className="skeleton h-24 w-full rounded-3xl" />
+        <div key={i} className="skeleton h-24 w-full rounded-2xl" />
       ))}
     </div>
   );
@@ -52,11 +52,14 @@ export default function SettimanaPage() {
     <div className="space-y-4 page-enter">
       {/* Header */}
       <div className="flex items-center justify-between pt-1">
-        <h1 className="text-2xl font-black text-gray-900">Vista Settimana 📅</h1>
+        <h1 className="text-2xl font-black" style={{ color: '#2D2016' }}>
+          La settimana 📅
+        </h1>
         {weekOffset !== 0 && (
           <button
             onClick={() => setWeekOffset(0)}
-            className="bg-orange-500 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-md active:scale-95 transition-transform"
+            className="text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm active:scale-95 transition-transform"
+            style={{ background: '#E8734A', color: '#FFFFFF' }}
           >
             Questa settimana
           </button>
@@ -64,25 +67,43 @@ export default function SettimanaPage() {
       </div>
 
       {/* Week Navigation */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-3 flex items-center justify-between shadow-sm">
+      <div
+        className="rounded-2xl border p-3 flex items-center justify-between shadow-sm"
+        style={{ background: '#FFFFFF', borderColor: '#F0E6D8' }}
+      >
         <button
           onClick={() => setWeekOffset(w => w - 1)}
-          className="w-11 h-11 rounded-xl bg-gray-100 active:bg-gray-200 transition-colors text-gray-600 font-bold text-xl flex items-center justify-center active:scale-95"
+          className="w-11 h-11 rounded-xl active:scale-95 transition-all font-bold text-xl flex items-center justify-center"
+          style={{ background: '#FFF8F0', color: '#8B7355', border: '1px solid #F0E6D8' }}
         >
           ‹
         </button>
         <div className="text-center">
-          <div className="text-sm font-bold text-gray-800">{weekRangeLabel}</div>
-          <div className="text-xs text-gray-400 font-medium">Settimana {weekPlan.settimana} di 4</div>
+          <div
+            className="text-sm font-bold"
+            style={{ color: '#2D2016' }}
+          >
+            {weekRangeLabel}
+          </div>
+          <div
+            className="text-xs font-medium"
+            style={{ color: '#8B7355' }}
+          >
+            Settimana {weekPlan.settimana} di 4
+          </div>
           {weekOffset === 0 && (
-            <span className="text-xs bg-orange-100 text-orange-600 font-bold px-2 py-0.5 rounded-full">
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{ background: '#FBE9E0', color: '#E8734A' }}
+            >
               Settimana corrente
             </span>
           )}
         </div>
         <button
           onClick={() => setWeekOffset(w => w + 1)}
-          className="w-11 h-11 rounded-xl bg-gray-100 active:bg-gray-200 transition-colors text-gray-600 font-bold text-xl flex items-center justify-center active:scale-95"
+          className="w-11 h-11 rounded-xl active:scale-95 transition-all font-bold text-xl flex items-center justify-center"
+          style={{ background: '#FFF8F0', color: '#8B7355', border: '1px solid #F0E6D8' }}
         >
           ›
         </button>

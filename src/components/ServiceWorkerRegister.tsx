@@ -12,17 +12,14 @@ interface BeforeInstallPromptEvent extends Event {
 export default function ServiceWorkerRegister() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [bannerVisible, setBannerVisible] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed]         = useState(false);
 
   useEffect(() => {
-    // Do nothing in non-browser environments (SSR safety)
     if (typeof window === 'undefined') return;
 
-    // Avoid showing banner if user already dismissed it in a previous session
     const wasDismissed = localStorage.getItem('pwa-install-dismissed');
     if (wasDismissed) return;
 
-    // Register the service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/meal-planner/sw.js', { scope: '/meal-planner/' })
@@ -34,7 +31,6 @@ export default function ServiceWorkerRegister() {
         });
     }
 
-    // Listen for the browser's install prompt
     const handler = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e as BeforeInstallPromptEvent);
@@ -42,7 +38,6 @@ export default function ServiceWorkerRegister() {
     };
 
     window.addEventListener('beforeinstallprompt', handler);
-
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
     };
@@ -50,14 +45,11 @@ export default function ServiceWorkerRegister() {
 
   const handleInstall = async () => {
     if (!installPrompt) return;
-
     await installPrompt.prompt();
     const choice = await installPrompt.userChoice;
-
     if (choice.outcome === 'accepted') {
-      console.log('[PWA] Utente ha accettato l\'installazione');
+      console.log('[PWA] Installazione accettata');
     }
-
     setInstallPrompt(null);
     setBannerVisible(false);
   };
@@ -73,23 +65,26 @@ export default function ServiceWorkerRegister() {
   return (
     <div
       role="banner"
-      className="fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white px-4 py-3 flex items-center justify-between shadow-lg"
+      className="fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between shadow-sm"
+      style={{ background: '#FBE9E0', borderBottom: '1px solid #F0E6D8' }}
     >
-      <div className="flex items-center gap-2 text-sm font-medium">
+      <div className="flex items-center gap-2 text-sm font-medium" style={{ color: '#2D2016' }}>
         <span className="text-xl">📲</span>
-        <span>Installa l&apos;app sul telefono!</span>
+        <span>Aggiungimi alla schermata home per avermi sempre a portata di mano!</span>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={handleInstall}
-          className="bg-white text-orange-600 text-xs font-bold px-3 py-1.5 rounded-full shadow active:scale-95 transition-transform"
+          className="text-xs font-bold px-3 py-1.5 rounded-full shadow active:scale-95 transition-transform"
+          style={{ background: '#E8734A', color: '#FFFFFF' }}
         >
           Installa
         </button>
         <button
           onClick={handleDismiss}
           aria-label="Chiudi"
-          className="text-white text-lg leading-none opacity-80 hover:opacity-100 px-1"
+          className="text-lg leading-none px-1 opacity-60 hover:opacity-100 transition-opacity"
+          style={{ color: '#8B7355' }}
         >
           ✕
         </button>

@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 }
 
 export default async function GiornoPage({ params }: Props) {
-  const { date }  = await params;
+  const { date }   = await params;
   const parsedDate = parseDateKey(date);
   const plan       = getDayPlan(parsedDate);
 
@@ -31,12 +31,18 @@ export default async function GiornoPage({ params }: Props) {
       <div className="flex items-center gap-3 pt-1">
         <Link
           href="/"
-          className="flex items-center gap-1.5 bg-white border border-gray-100 text-gray-600 font-bold text-sm px-3.5 py-2.5 rounded-2xl shadow-sm active:scale-95 transition-transform"
+          className="flex items-center gap-1.5 font-bold text-sm px-3.5 py-2.5 rounded-xl shadow-sm active:scale-95 transition-transform"
+          style={{ background: '#FFFFFF', border: '1px solid #F0E6D8', color: '#8B7355' }}
         >
           <span className="text-base">←</span>
           <span>Home</span>
         </Link>
-        <h1 className="text-lg font-black text-gray-900">Dettaglio Giorno</h1>
+        <h1
+          className="text-lg font-black"
+          style={{ color: '#2D2016' }}
+        >
+          Dettaglio Giorno
+        </h1>
       </div>
       <DayView plan={plan} date={parsedDate} showNavigation={true} />
     </div>

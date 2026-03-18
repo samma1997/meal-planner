@@ -18,15 +18,13 @@ interface MealSlot {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MEAL_SLOTS: MealSlot[] = [
-  { tipo: 'colazione', label: 'Colazione', emoji: '🌅', minuteOfDay: 7 * 60 + 30 },   // 07:30
-  { tipo: 'pranzo',    label: 'Pranzo',    emoji: '🍽️', minuteOfDay: 12 * 60 },        // 12:00
-  { tipo: 'spuntino',  label: 'Spuntino',  emoji: '🍎', minuteOfDay: 16 * 60 },        // 16:00
-  { tipo: 'cena',      label: 'Cena',      emoji: '🌙', minuteOfDay: 19 * 60 + 30 },   // 19:30
+  { tipo: 'colazione', label: 'Colazione', emoji: '🌅', minuteOfDay: 7 * 60 + 30 },
+  { tipo: 'pranzo',    label: 'Pranzo',    emoji: '🍽️', minuteOfDay: 12 * 60      },
+  { tipo: 'spuntino',  label: 'Spuntino',  emoji: '🍎', minuteOfDay: 16 * 60      },
+  { tipo: 'cena',      label: 'Cena',      emoji: '🌙', minuteOfDay: 19 * 60 + 30 },
 ];
 
-/** How many minutes before the target time we start showing the notification */
 const TRIGGER_WINDOW_MINUTES = 1;
-/** localStorage key prefix for last-sent timestamps */
 const LS_KEY = 'pasti-notif-last';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -58,14 +56,12 @@ function showLocalNotification(title: string, body: string): void {
 
   const options: NotificationOptions = {
     body,
-    icon: '/meal-planner/icons/icon-192.png',
-    badge: '/meal-planner/icons/icon-192.png',
-    // tag prevents duplicate notifications for the same slot
-    tag: title,
+    icon:   '/meal-planner/icons/icon-192.png',
+    badge:  '/meal-planner/icons/icon-192.png',
+    tag:    title,
     silent: false,
   };
 
-  // Prefer SW-based notification (works when tab is in background)
   if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.ready.then((reg) => {
       reg.showNotification(title, options);
@@ -79,48 +75,42 @@ function showLocalNotification(title: string, body: string): void {
 
 export default function NotificationManager() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [visible, setVisible] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [visible, setVisible]       = useState(false);
+  const intervalRef                 = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Check if we should fire any notification right now
   const checkAndNotify = useCallback(() => {
     if (Notification.permission !== 'granted') return;
 
     const nowMinute = currentMinuteOfDay();
-    const today = new Date();
-    const plan = getDayPlan(today);
+    const today     = new Date();
+    const plan      = getDayPlan(today);
 
     for (const slot of MEAL_SLOTS) {
       if (wasSentToday(slot.tipo)) continue;
 
       const delta = nowMinute - slot.minuteOfDay;
-      // Fire if we are within [0, TRIGGER_WINDOW_MINUTES) minutes past the target
       if (delta >= 0 && delta < TRIGGER_WINDOW_MINUTES) {
-        const meal = plan[slot.tipo];
+        const meal  = plan[slot.tipo];
         const title = `${slot.emoji} ${slot.label}`;
-        const body = `Oggi: ${meal.emoji} ${meal.nome} — ${meal.macros.kcal} kcal`;
+        const body  = `Oggi: ${meal.emoji} ${meal.nome} — ${meal.macros.kcal} kcal`;
         showLocalNotification(title, body);
         markSent(slot.tipo);
       }
     }
   }, []);
 
-  // On mount: read persisted permission state and check for missed notifications
   useEffect(() => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
 
     const current = Notification.permission as NotificationPermission;
     setPermission(current);
 
-    // Show the request button only if not yet decided
     if (current === 'default') {
       setVisible(true);
     }
 
     if (current === 'granted') {
-      // Catch up on any notifications missed while the tab was closed
       checkAndNotify();
-      // Start the per-minute polling interval
       intervalRef.current = setInterval(checkAndNotify, 60_000);
     }
 
@@ -133,7 +123,7 @@ export default function NotificationManager() {
     if (!('Notification' in window)) return;
 
     const result = await Notification.requestPermission();
-    const perm = result as NotificationPermission;
+    const perm   = result as NotificationPermission;
     setPermission(perm);
 
     if (perm === 'granted') {
@@ -145,24 +135,35 @@ export default function NotificationManager() {
     }
   };
 
-  // Nothing to render once permission is resolved or API is absent
   if (!visible || typeof window === 'undefined' || !('Notification' in window)) return null;
   if (permission !== 'default') return null;
 
   return (
     <div className="mx-auto max-w-2xl px-4 pt-2">
-      <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm">
+      <div
+        className="rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm"
+        style={{ background: '#FBE9E0', border: '1px solid #F0E6D8' }}
+      >
         <div>
-          <p className="text-sm font-bold text-orange-800">Promemoria pasti</p>
-          <p className="text-xs text-orange-600 mt-0.5">
-            Ricevi un promemoria a colazione, pranzo, spuntino e cena
+          <p
+            className="text-sm font-bold"
+            style={{ color: '#2D2016' }}
+          >
+            Vuoi che ti ricordi cosa preparare? 🔔
+          </p>
+          <p
+            className="text-xs mt-0.5"
+            style={{ color: '#8B7355' }}
+          >
+            Ti mando un promemoria a colazione, pranzo, spuntino e cena
           </p>
         </div>
         <button
           onClick={requestPermission}
-          className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow active:scale-95 transition-transform whitespace-nowrap"
+          className="shrink-0 text-xs font-bold px-3 py-2 rounded-xl shadow active:scale-95 transition-transform whitespace-nowrap"
+          style={{ background: '#E8734A', color: '#FFFFFF' }}
         >
-          Attiva notifiche 🔔
+          Attiva
         </button>
       </div>
     </div>

@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf9f7;
-  --foreground: #111827;
+  --background: #FFF8F0;
+  --foreground: #2D2016;
+  --card: #FFFFFF;
+  --accent: #E8734A;
+  --accent-light: #FBE9E0;
+  --text-secondary: #8B7355;
+  --success: #6B9E6B;
+  --border: #F0E6D8;
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
 
@@ -11,10 +17,6 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
-  background-image:
-    radial-gradient(ellipse at 20% 0%, rgba(251, 146, 60, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(167, 139, 250, 0.05) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 
 * {
@@ -35,7 +37,7 @@ a, button {
   touch-action: manipulation;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar — warm tones */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -43,12 +45,24 @@ a, button {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(251, 146, 60, 0.3);
+  background: rgba(232, 115, 74, 0.25);
   border-radius: 99px;
 }
 
-/* Page entrance animation */
-@keyframes fadeSlideIn {
+/* Page entrance — simple fade in, no bouncing */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card stagger fade */
+@keyframes cardFadeIn {
   from {
     opacity: 0;
     transform: translateY(12px);
@@ -59,44 +73,6 @@ a, button {
   }
 }
 
-/* Stagger animation for cards */
-@keyframes cardIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Pulsing glow for "today" badge */
-@keyframes todayPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(249, 115, 22, 0);
-  }
-}
-
-/* Celebration bounce */
-@keyframes celebrateBounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  20% { transform: translateY(-12px) scale(1.1); }
-  40% { transform: translateY(-6px) scale(1.05); }
-  60% { transform: translateY(-10px) scale(1.08); }
-  80% { transform: translateY(-4px) scale(1.03); }
-}
-
-/* Spin for celebration */
-@keyframes celebrateSpin {
-  from { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.2); }
-  to { transform: rotate(360deg) scale(1); }
-}
-
 /* Checkmark pop */
 @keyframes checkPop {
   0% { transform: scale(0); }
@@ -104,50 +80,52 @@ a, button {
   100% { transform: scale(1); }
 }
 
-/* Shimmer skeleton */
+/* Shimmer skeleton — warm cream tones */
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
+/* Subtle glow pulse for unlocked badge */
+@keyframes softGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(232, 115, 74, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(232, 115, 74, 0);
+  }
+}
+
 .page-enter {
-  animation: fadeSlideIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fadeIn 0.3s ease-out both;
 }
 
 .card-enter {
-  animation: cardIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: cardFadeIn 0.35s ease-out both;
 }
 
-.card-enter:nth-child(1) { animation-delay: 0.05s; }
-.card-enter:nth-child(2) { animation-delay: 0.12s; }
-.card-enter:nth-child(3) { animation-delay: 0.19s; }
-.card-enter:nth-child(4) { animation-delay: 0.26s; }
-.card-enter:nth-child(5) { animation-delay: 0.33s; }
-.card-enter:nth-child(6) { animation-delay: 0.40s; }
-.card-enter:nth-child(7) { animation-delay: 0.47s; }
-
-.today-pulse {
-  animation: todayPulse 2s ease-in-out infinite;
-}
-
-.celebrate-bounce {
-  animation: celebrateBounce 0.8s ease-in-out;
-}
-
-.celebrate-spin {
-  animation: celebrateSpin 0.6s ease-in-out;
-}
+.card-enter:nth-child(1) { animation-delay: 0.04s; }
+.card-enter:nth-child(2) { animation-delay: 0.10s; }
+.card-enter:nth-child(3) { animation-delay: 0.16s; }
+.card-enter:nth-child(4) { animation-delay: 0.22s; }
+.card-enter:nth-child(5) { animation-delay: 0.28s; }
+.card-enter:nth-child(6) { animation-delay: 0.34s; }
+.card-enter:nth-child(7) { animation-delay: 0.40s; }
 
 .check-pop {
   animation: checkPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+.badge-glow {
+  animation: softGlow 2s ease-in-out infinite;
+}
+
 .skeleton {
   background: linear-gradient(
     90deg,
-    #f0f0f0 25%,
-    #fafafa 50%,
-    #f0f0f0 75%
+    #F0E6D8 25%,
+    #FFF8F0 50%,
+    #F0E6D8 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -156,10 +134,9 @@ a, button {
 
 /* Smooth expand/collapse */
 .expand-enter {
-  animation: fadeSlideIn 0.25s ease-out both;
+  animation: fadeIn 0.2s ease-out both;
 }
 
-/* Active tap scale — applied via Tailwind active:scale-95 */
 .tap-active:active {
   transform: scale(0.97);
   transition: transform 0.1s ease;

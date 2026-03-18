@@ -22,6 +22,27 @@ export interface Meal {
   tempoPreparazione: number; // minuti
   macros: Macros;
   note?: string;
+  ricetta: string[]; // Array of step-by-step instructions, brief and clear
+}
+
+export interface Badge {
+  id: string;
+  nome: string;
+  emoji: string;
+  descrizione: string;
+  condizione: 'giorni_consecutivi' | 'pasti_completati' | 'settimane_complete' | 'lista_spesa' | 'speciale';
+  valore: number; // threshold to unlock
+  sbloccato?: boolean;
+}
+
+export interface UserProgress {
+  giorniCompletati: number;
+  pastiCompletati: number;
+  settimaneComplete: number;
+  listeSpesaComplete: number;
+  giorniConsecutivi: number;
+  ultimoGiorno: string; // YYYY-MM-DD
+  badgeSbloccati: string[]; // badge IDs
 }
 
 export interface DayPlan {

@@ -4,25 +4,33 @@ import { useState, useEffect } from 'react';
 import { getDayPlan, formatDateKey, parseDateKey } from '@/data/utils';
 import DayView from '@/components/DayView';
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Buongiorno';
+  if (hour < 18) return 'Buon pomeriggio';
+  return 'Buonasera';
+}
+
+function formatDateNice(date: Date): string {
+  return date.toLocaleDateString('it-IT', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+}
+
 function SkeletonLoader() {
   return (
-    <div className="space-y-4 page-enter">
-      {/* Header skeleton */}
+    <div className="space-y-5 page-enter">
       <div className="space-y-2">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-4 w-64" />
+        <div className="skeleton h-9 w-52" />
+        <div className="skeleton h-5 w-40" />
       </div>
-      {/* Date picker skeleton */}
       <div className="skeleton h-16 w-full rounded-2xl" />
-      {/* Hero header skeleton */}
-      <div className="skeleton h-28 w-full rounded-3xl" />
-      {/* Cost skeleton */}
+      <div className="skeleton h-28 w-full rounded-2xl" />
       <div className="skeleton h-16 w-full rounded-2xl" />
-      {/* Macro skeleton */}
-      <div className="skeleton h-44 w-full rounded-3xl" />
-      {/* Cards skeleton */}
       {[1, 2, 3, 4].map(i => (
-        <div key={i} className="skeleton h-32 w-full rounded-3xl" />
+        <div key={i} className="skeleton h-28 w-full rounded-2xl" />
       ))}
     </div>
   );
@@ -51,45 +59,50 @@ export default function Home() {
   const goToToday = () => setSelectedDate(new Date());
 
   return (
-    <div className="space-y-4 page-enter">
-      {/* App Header */}
-      <div className="flex items-center justify-between pt-1">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900 leading-tight">
-            Piano Pasti <span className="text-orange-500">Luca</span> 💪
-          </h1>
-          <p className="text-sm text-gray-400 font-medium mt-0.5">2400 kcal · 150g P · 280g C · 65g G</p>
-        </div>
-        {!isToday && (
-          <button
-            onClick={goToToday}
-            className="bg-orange-500 text-white text-sm font-bold px-4 py-2.5 rounded-2xl shadow-md active:scale-95 transition-transform"
-          >
-            Oggi
-          </button>
+    <div className="space-y-5 page-enter">
+      {/* Warm greeting header */}
+      <div className="pt-1">
+        <h1 className="text-3xl font-black leading-tight" style={{ color: '#2D2016' }}>
+          {getGreeting()}, Giusy!
+        </h1>
+        <p className="text-base font-medium mt-1 capitalize" style={{ color: '#8B7355' }}>
+          {formatDateNice(selectedDate)}
+        </p>
+        {isToday && (
+          <p className="text-sm font-medium mt-0.5" style={{ color: '#E8734A' }}>
+            Ecco cosa preparare oggi
+          </p>
         )}
       </div>
 
-      {/* Date Picker */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-3.5 flex items-center gap-3 shadow-sm">
-        <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-xl shrink-0">
+      {/* Date selector — warm card */}
+      <div
+        className="rounded-2xl border p-3.5 flex items-center gap-3 shadow-sm"
+        style={{ background: '#FFFFFF', borderColor: '#F0E6D8' }}
+      >
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+          style={{ background: '#FBE9E0' }}
+        >
           📅
         </div>
         <div className="flex-1">
-          <label className="text-xs text-gray-400 block mb-0.5 font-semibold uppercase tracking-wide">
-            Vai a un giorno
+          <label className="text-xs font-semibold uppercase tracking-wide block mb-0.5" style={{ color: '#8B7355' }}>
+            Scegli un giorno
           </label>
           <input
             type="date"
             value={formatDateKey(selectedDate)}
             onChange={handleDateChange}
-            className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none cursor-pointer"
+            className="w-full text-sm font-bold bg-transparent outline-none cursor-pointer"
+            style={{ color: '#2D2016' }}
           />
         </div>
         {!isToday && (
           <button
             onClick={goToToday}
-            className="text-xs text-orange-500 font-bold border-2 border-orange-300 px-3 py-1.5 rounded-xl active:scale-95 transition-transform"
+            className="text-xs font-bold px-3 py-1.5 rounded-xl active:scale-95 transition-transform"
+            style={{ background: '#E8734A', color: '#FFFFFF' }}
           >
             Oggi
           </button>

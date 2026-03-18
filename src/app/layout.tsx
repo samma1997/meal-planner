@@ -11,38 +11,36 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Piano Pasti Luca",
-  description: "Piano alimentare settimanale per Luca — 2400 kcal/giorno per supportare l'allenamento in palestra.",
+  title: "La Cucina di Giusy",
+  description: "Il piano pasti settimanale di Giusy — ricette semplici e buone ogni giorno.",
   manifest: "/meal-planner/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Piano Pasti",
+    title: "La Cucina di Giusy",
   },
   other: {
     "mobile-web-app-capable": "yes",
   },
-  // Open Graph — used by WhatsApp, Telegram, iMessage link previews
   openGraph: {
     type: "website",
     url: "https://lucasammarco.github.io/meal-planner/",
-    title: "Piano Pasti Luca",
-    description: "Piano alimentare settimanale — 2400 kcal/giorno per supportare l'allenamento in palestra.",
-    siteName: "Piano Pasti Luca",
+    title: "La Cucina di Giusy",
+    description: "Il piano pasti settimanale di Giusy — ricette semplici e buone ogni giorno.",
+    siteName: "La Cucina di Giusy",
     images: [
       {
         url: "https://lucasammarco.github.io/meal-planner/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Piano Pasti Luca — app per il piano alimentare settimanale",
+        alt: "La Cucina di Giusy — piano pasti settimanale",
       },
     ],
   },
-  // Twitter card (also used by some messengers)
   twitter: {
     card: "summary_large_image",
-    title: "Piano Pasti Luca",
-    description: "Piano alimentare settimanale — 2400 kcal/giorno per supportare l'allenamento in palestra.",
+    title: "La Cucina di Giusy",
+    description: "Il piano pasti settimanale di Giusy — ricette semplici e buone ogni giorno.",
     images: ["https://lucasammarco.github.io/meal-planner/og-image.png"],
   },
 };
@@ -51,7 +49,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#f97316",
+  themeColor: "#E8734A",
 };
 
 export default function RootLayout({
@@ -62,19 +60,13 @@ export default function RootLayout({
   return (
     <html lang="it">
       <head>
-        {/* Favicon — SVG for modern browsers */}
         <link rel="icon" href="/meal-planner/favicon.svg" type="image/svg+xml" />
-        {/* Fallback ICO for very old browsers */}
         <link rel="icon" href="/meal-planner/favicon.ico" sizes="any" />
-        {/* Apple touch icon for iOS home screen */}
         <link rel="apple-touch-icon" href="/meal-planner/icons/apple-touch-icon.svg" />
-        {/* Mask icon for Safari pinned tabs */}
-        <link rel="mask-icon" href="/meal-planner/favicon.svg" color="#f97316" />
+        <link rel="mask-icon" href="/meal-planner/favicon.svg" color="#E8734A" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased bg-gray-50 min-h-screen`}>
-        {/* PWA: service worker registration + install banner */}
+      <body className={`${inter.variable} font-sans antialiased min-h-screen`} style={{ background: '#FFF8F0' }}>
         <ServiceWorkerRegister />
-        {/* Daily meal reminder notifications prompt */}
         <NotificationManager />
         <main className="max-w-2xl mx-auto px-4 pt-4 pb-24">
           {children}
